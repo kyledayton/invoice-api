@@ -1,9 +1,9 @@
 # Invoice Generator API
 Simple JSON API to create an invoice PDF.
 
-## Run with podman (or docker)
+## Run with docker compose
 ```sh
-podman build -t invoice-api-web . && podman run -p 8000:8000 invoice-api-web
+docker compose up
 ```
 
 ## Documentation
@@ -11,7 +11,7 @@ podman build -t invoice-api-web . && podman run -p 8000:8000 invoice-api-web
 |Name|Default Value|Description|
 |----|-------------|-----------|
 |`PORT`|`8000`|Web server port|
-|`CHROME_EXECUTABLE`|`google-chrome`|Google Chrome executable|
+|`CHROME_DEV_TOOLS_URL`|`ws://127.0.0.1:9222`|Remote Chrome dev tools URL|
 
 ### Generate a PDF
 ```sh
@@ -20,6 +20,7 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --output 'Invoice #INV-1234.pdf' \
   --data '{
+	"title": "Invoice",
 	"number": "INV-1234",
 	"date": "2022-10-02",
 	"due_date": "11/14/2022",

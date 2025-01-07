@@ -9,6 +9,8 @@ import (
 )
 
 func assert(t *testing.T, html string, content string) {
+	t.Helper()
+
 	if !strings.Contains(html, content) {
 		t.Fatalf("Expected document to contain \"%s\", but it did not", content)
 	}
@@ -16,6 +18,8 @@ func assert(t *testing.T, html string, content string) {
 
 func TestRenderInvoiceHTML(t *testing.T) {
 	inv := invoice.NewInvoice("INV-1234")
+	inv.Title = "Some-Invoice"
+
 	inv.BillFrom = invoice.Contact{
 		Name:         "Example Contractor LLC",
 		EmailAddress: "contractor@example.com",
@@ -48,27 +52,28 @@ func TestRenderInvoiceHTML(t *testing.T) {
 	inv.AddLineItem(invoice.NewLineItem("Administrative Services", 3.91, invoice.NewPrice(42, 23)))
 	inv.AddLineItem(invoice.NewLineItem("Additional Cost", 1, invoice.NewPrice(999, 99)))
 
-	bytes, err := renderInvoiceHTML(inv)
+	bytes, err := RenderInvoiceHTML(inv)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	htmlStr := string(bytes)
 
+	assert(t, htmlStr, inv.Title)
 	assert(t, htmlStr, "INV-1234")
 	assert(t, htmlStr, inv.BillFrom.Name)
 	assert(t, htmlStr, inv.BillFrom.EmailAddress)
 	assert(t, htmlStr, mailto(inv.BillFrom.EmailAddress))
 	assert(t, htmlStr, inv.BillFrom.PhoneNumber)
 	assert(t, htmlStr, inv.BillFrom.Address.Line1)
-	assert(t, htmlStr, addressTopLine(&inv.BillFrom.Address))
 	assert(t, htmlStr, addressBottomLine(&inv.BillFrom.Address))
 
 	assert(t, htmlStr, inv.BillTo.Name)
 	assert(t, htmlStr, inv.BillTo.EmailAddress)
 	assert(t, htmlStr, mailto(inv.BillTo.EmailAddress))
 	assert(t, htmlStr, inv.BillTo.PhoneNumber)
-	assert(t, htmlStr, addressTopLine(&inv.BillTo.Address))
+	assert(t, htmlStr, inv.BillTo.Address.Line1)
+	assert(t, htmlStr, inv.BillTo.Address.Line2)
 	assert(t, htmlStr, addressBottomLine(&inv.BillTo.Address))
 
 	assert(t, htmlStr, inv.TotalPrice().String())

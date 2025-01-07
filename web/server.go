@@ -8,17 +8,17 @@ import (
 
 type Server struct {
 	*http.Server
-	port int
+	Handler http.Handler
+	port    int
 }
 
-func NewServer(port int) *Server {
-	routes := makeRoutes()
+func NewServer(port int, handler http.Handler) *Server {
 	addr := fmt.Sprintf(":%d", port)
 
 	return &Server{
 		Server: &http.Server{
 			Addr:    addr,
-			Handler: routes,
+			Handler: handler,
 		},
 		port: port,
 	}

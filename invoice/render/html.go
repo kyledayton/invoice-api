@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"math"
-	"strings"
 
 	"invoice-api/invoice"
 )
@@ -17,7 +16,6 @@ var invoiceTemplate *template.Template
 
 func init() {
 	invoiceTemplate = template.New("invoice").Funcs(template.FuncMap{
-		"addressTopLine":    addressTopLine,
 		"addressBottomLine": addressBottomLine,
 		"mailto":            mailto,
 		"date":              dateFmt,
@@ -27,7 +25,7 @@ func init() {
 	invoiceTemplate = template.Must(invoiceTemplate.Parse(invoiceTemplateString))
 }
 
-func renderInvoiceHTML(invoice *invoice.Invoice) ([]byte, error) {
+func RenderInvoiceHTML(invoice *invoice.Invoice) ([]byte, error) {
 	output := bytes.NewBuffer(nil)
 
 	err := invoiceTemplate.Execute(output, invoice)
@@ -36,14 +34,6 @@ func renderInvoiceHTML(invoice *invoice.Invoice) ([]byte, error) {
 	}
 
 	return output.Bytes(), nil
-}
-
-func addressTopLine(a *invoice.Address) string {
-	if strings.TrimSpace(a.Line2) != "" {
-		return fmt.Sprintf("%s, %s", a.Line1, a.Line2)
-	} else {
-		return a.Line1
-	}
 }
 
 func addressBottomLine(a *invoice.Address) string {

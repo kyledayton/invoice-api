@@ -1,0 +1,11 @@
+services:
+  chrome:
+    image: chromedp/headless-shell
+  api:
+    build: .
+    depends_on:
+      - chrome
+    environment:
+      - CHROME_DEV_TOOLS_URL=ws://chrome:9222
+    ports:
+      - "8000:8000"

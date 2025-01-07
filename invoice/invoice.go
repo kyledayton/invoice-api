@@ -1,23 +1,25 @@
 package invoice
 
 type Invoice struct {
+	Title     string
 	Number    string
 	Date      Date
 	DueDate   Date       `json:"due_date"`
 	BillFrom  Contact    `json:"bill_from"`
 	BillTo    Contact    `json:"bill_to"`
 	LineItems []LineItem `json:"line_items"`
+	Notes     string
 }
 
 func NewInvoice(number string) *Invoice {
-	inv := &Invoice{
+	return &Invoice{
+		Title:     "Invoice",
 		Number:    number,
 		LineItems: make([]LineItem, 0),
 		BillFrom:  Contact{},
 		BillTo:    Contact{},
+		Notes:     "",
 	}
-
-	return inv
 }
 
 func (i *Invoice) TotalPrice() Price {
